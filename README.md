@@ -241,6 +241,17 @@ SMART-STUDY-MATCHER/
 │   │
 │   └── package.json
 │
+├── screenshots/
+│   ├── academic-units.png
+│   ├── chat.png
+│   ├── dashboard.png
+│   ├── login.png
+│   ├── match-requests.png
+│   ├── matching-recommendations.png
+│   ├── notifications.png
+│   ├── profile.png
+│   └── study-sessions.png
+│
 ├── .gitignore
 └── README.md
 ```
