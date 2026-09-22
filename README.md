@@ -399,7 +399,7 @@ From the `backend` directory:
 docker compose up --build
 ```
 
-The backend API is configured to run on port `8080` inside the application environment.
+The backend listens on port `8080` inside its Docker container and is exposed on the host at `http://localhost:8082`.
 
 ### Install Frontend Dependencies
 
@@ -416,7 +416,7 @@ npm install
 npm run dev
 ```
 
-The Vite development server will provide the local frontend address shown in the terminal.
+The Vite development server runs on port `5174` for the current development configuration: `http://localhost:5174`. The frontend communicates with the backend API through `http://localhost:8082`.
 
 ## Database Seeding
 
