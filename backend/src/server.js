@@ -16,7 +16,7 @@ async function start() {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
-  origins.push("http://localhost:5173", "http://localhost:5174");
+  origins.push("http://localhost:5174");
 
   const io = new Server(server, {
     cors: {
