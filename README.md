@@ -439,30 +439,43 @@ Further automated testing and test coverage can be expanded as the project conti
 
 ## Screenshots
 
-Screenshots of the implemented application will be added here to demonstrate the main user workflows.
+The following screenshots demonstrate the main workflows and features implemented in the Smart Study Matcher application.
 
-Planned screenshots include:
+### Login and Registration
 
-* Login and registration
-* Student dashboard
-* Profile
-* Academic units
-* Matching recommendations
-* Match requests
-* Chat
-* Notifications
-* Study sessions
-* Administrative interface
+![Login and Registration](screenshots/login.png)
 
-```text
-screenshots/
-├── login.png
-├── dashboard.png
-├── profile.png
-├── matching.png
-├── chat.png
-└── sessions.png
-```
+### Student Dashboard
+
+![Student Dashboard](screenshots/dashboard.png)
+
+### Student Profile
+
+![Student Profile](screenshots/profile.png)
+
+### Academic Units
+
+![Academic Units](screenshots/academic-units.png)
+
+### Matching Recommendations
+
+![Matching Recommendations](screenshots/matching-recommendations.png)
+
+### Match Requests
+
+![Match Requests](screenshots/match-requests.png)
+
+### Real-Time Chat
+
+![Real-Time Chat](screenshots/chat.png)
+
+### Study Sessions
+
+![Study Sessions](screenshots/study-sessions.png)
+
+### Notifications
+
+![Notifications](screenshots/notifications.png)
 
 ## Academic Context
 
