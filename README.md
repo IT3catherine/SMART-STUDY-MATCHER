@@ -520,7 +520,7 @@ Potential future improvements include:
 
 The core web application has been implemented with student authentication, profiles, academic units, availability management, matching, requests, messaging, notifications, sessions, feedback, blocking, and administrative functionality.
 
-The project continues to be refined with additional testing, documentation, screenshots, and usability improvements.
+The project has undergone functional testing, security checks, documentation updates, and usability improvements. The repository includes application screenshots demonstrating the main student workflows. Further enhancements and testing may be added in future development.
 
 ## Author
 
