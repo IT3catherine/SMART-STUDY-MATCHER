@@ -6,6 +6,7 @@ const { notificationRepo } = require("../repositories/notification.repo");
 const { emailService } = require("../services/email.service");
 const { blockRepo } = require("../repositories/block.repo");
 const { eventRepo } = require("../repositories/event.repo");
+const { unitRepo } = require("../repositories/unit.repo");
 
 
 const router = express.Router();
@@ -58,11 +59,20 @@ router.post("/", requireAuth, async (req, res, next) => {
       unit_id: body.unit_id
     });
 
+    const unit = await unitRepo.findById(body.unit_id);
     await notificationRepo.create({
       user_id: body.to_user_id,
       type: "REQUEST_RECEIVED",
-      payload: { from_user_id: req.user.sub, from_user_name: req.user.name, request_id: reqRow.id, unit_id: body.unit_id }
-    });
+      payload: {
+        from_user_id: req.user.sub,
+        from_user_name: req.user.name,
+        request_id: reqRow.id,
+        unit_id: body.unit_id,
+        unit_code: unit?.code || null,
+        unit_name: unit?.name || null
+       }
+
+     });
 
     await emailService.sendRequestReceivedEmail({
       toUserId: body.to_user_id,

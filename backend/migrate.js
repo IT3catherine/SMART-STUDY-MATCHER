@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgres://admin:admin123@localhost:5434/stud_db'
+  connectionString: process.env.DATABASE_URL
 });
 
 async function migrate() {

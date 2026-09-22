@@ -8,6 +8,7 @@ export default function SessionsPage() {
 
   const [matches, setMatches] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [profileMode, setProfileMode] = useState("online");
 
   const [matchId, setMatchId] = useState("");
   const [startsLocal, setStartsLocal] = useState("");
@@ -18,13 +19,24 @@ export default function SessionsPage() {
 
   const matchOptions = useMemo(() => matches || [], [matches]);
 
+  const selectedMatch = useMemo(
+    () => matchOptions.find((m) => m.id === matchId),
+    [matchOptions, matchId]
+  );
   async function load() {
-    const m = await api.get("/api/matches/me");
-    const s = await api.get("/api/sessions/me");
-    setMatches(m.matches || []);
-    setSessions(s.sessions || []);
-    if (!matchId && (m.matches || []).length) setMatchId(m.matches[0].id);
+  const p = await api.get("/api/profile/me");
+  const m = await api.get("/api/matches/me");
+  const s = await api.get("/api/sessions/me");
+
+  setProfileMode(p.profile?.collaboration_mode || "online");
+
+  setMatches(m.matches || []);
+  setSessions(s.sessions || []);
+
+  if (!matchId && (m.matches || []).length) {
+    setMatchId(m.matches[0].id);
   }
+}
 
   useEffect(() => {
     let mounted = true;
@@ -33,6 +45,10 @@ export default function SessionsPage() {
     })();
     return () => (mounted = false);
   }, []);
+
+   useEffect(() => {
+    setMode(profileMode === "physical" ? "physical" : "online");
+  }, [profileMode]);
 
   function toISO(localValue) {
     if (!localValue) return null;
@@ -46,7 +62,7 @@ export default function SessionsPage() {
       <ErrorBox error={error} />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 2.5fr", gap: 30 }}>
-        
+
         {/* Creation Panel */}
         <div className="card stack" style={{ padding: 40, borderRadius: 20, background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%)", boxShadow: "0 10px 40px rgba(0,0,0,0.3)", borderTop: "4px solid #f39c12", height: "fit-content" }}>
           <div>
@@ -59,9 +75,27 @@ export default function SessionsPage() {
             <select className="input" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12, padding: 12, color: "white" }} value={matchId} onChange={(e) => setMatchId(e.target.value)}>
               <option value="" disabled>Select match...</option>
               {matchOptions.map((m) => (
-                <option key={m.id} value={m.id}>{m.other_name}</option>
+                <option key={m.id} value={m.id}>
+                  {m.other_name} — {m.unit_name || "General Study Session"}{m.unit_code ? ` (${m.unit_code})` : ""}
+                </option>
               ))}
             </select>
+
+            {selectedMatch && (
+              <div style={{
+                marginTop: 6,
+                padding: "10px 12px",
+                background: "rgba(243,156,18,0.08)",
+                border: "1px solid rgba(243,156,18,0.2)",
+                borderRadius: 10,
+                color: "rgba(255,255,255,0.8)",
+                fontSize: 13
+              }}>
+                🎓 <strong style={{ color: "#f39c12" }}>Subject / Unit:</strong>{" "}
+                {selectedMatch.unit_name || "General Study Session"}
+                {selectedMatch.unit_code ? ` (${selectedMatch.unit_code})` : ""}
+              </div>
+            )}
           </div>
 
           <div className="stack" style={{ gap: 8 }}>
@@ -77,9 +111,13 @@ export default function SessionsPage() {
           <div className="stack" style={{ gap: 8 }}>
             <div className="label" style={{ fontWeight: 800, color: "#a8a8b3" }}>Mode</div>
             <select className="input" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12, padding: 12, color: "white" }} value={mode} onChange={(e) => setMode(e.target.value)}>
-              <option value="online">Online</option>
-              <option value="physical">Physical</option>
-              <option value="hybrid">Hybrid</option>
+             {(profileMode === "online" || profileMode === "hybrid") && (
+               <option value="online">Online</option>
+             )}
+
+             {(profileMode === "physical" || profileMode === "hybrid") && (
+               <option value="physical">Physical</option>
+             )}
             </select>
           </div>
 
@@ -117,7 +155,7 @@ export default function SessionsPage() {
         {/* Master Details Panel */}
         <div className="card stack" style={{ padding: 40, borderRadius: 20, background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%)", boxShadow: "0 10px 40px rgba(0,0,0,0.3)" }}>
           <div>
-            <div style={{ fontSize: 32, fontWeight: 900, color: "white", display: "flex", alignItems: "center", gap: 12 }}><span style={{fontSize:40}}>📅</span> Scheduled Logistics</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "white", display: "flex", alignItems: "center", gap: 12 }}>Scheduled Logistics</div>
             <div className="muted" style={{ fontSize: 16, marginTop: 8 }}>Your upcoming collaborative appointments.</div>
           </div>
 
@@ -131,15 +169,20 @@ export default function SessionsPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 30 }}>
               {sessions.map((s) => (
                 <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px", background: "rgba(255,255,255,0.02)", borderRadius: 16, borderLeft: "4px solid #f39c12", transition: "transform 0.2s" }} onMouseEnter={e => e.currentTarget.style.transform="scale(1.02)"} onMouseLeave={e => e.currentTarget.style.transform="scale(1)"}>
-                  
+
                   <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
                     <div style={{ background: "rgba(243,156,18,0.1)", color: "#f39c12", padding: "16px", borderRadius: 16, textAlign: "center", minWidth: 90 }}>
                        <div style={{ fontSize: 28, fontWeight: 900, lineHeight: 1 }}>{new Date(s.starts_at).getDate()}</div>
                        <div style={{ fontSize: 14, fontWeight: 800, textTransform: "uppercase", marginTop: 4 }}>{new Date(s.starts_at).toLocaleString('default', { month: 'short' })}</div>
                     </div>
-                    
+
                     <div>
-                      <div style={{ fontSize: 22, fontWeight: 900, color: "white" }}>{matchOptions.find(mo => mo.id === s.match_id)?.other_name || "Unknown Match"}</div>
+                      <div style={{ fontSize: 22, fontWeight: 900, color: "white" }}>
+                        {matchOptions.find(mo => mo.id === s.match_id)?.other_name || "Unknown Match"}
+                      </div>
+                      <div style={{ color: "#f39c12", fontSize: 14, fontWeight: 700, marginTop: 6 }}>
+                        🎓 {s.unit_name || "General Study Session"}{s.unit_code ? ` (${s.unit_code})` : ""}
+                      </div>
                       <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, fontWeight: 600, marginTop: 8, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>🕒 {new Date(s.starts_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} — {new Date(s.ends_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         <span style={{ padding: "4px 10px", background: "rgba(255,255,255,0.05)", borderRadius: 8, fontSize: 11, letterSpacing: 1 }}>{s.mode.toUpperCase()}</span>

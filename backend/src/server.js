@@ -32,9 +32,17 @@ async function start() {
     
     socket.on("send_message", async (data) => {
       try {
-        const { match_id, sender_id, text, sender_name } = data;
+        const { match_id, sender_id, text } = data;
+
+        const senderResult = await pool.query(
+          "select name from users where id=$1",
+          [sender_id]
+        );
+
+        const senderName = senderResult.rows[0]?.name || "Study Partner";
+
         const msg = await messageRepo.save({ match_id, sender_id, text });
-        msg.sender_name = sender_name; // Attach sender name for UI
+        msg.sender_name = senderName;
         io.to(match_id).emit("receive_message", msg);
 
         try {
@@ -52,7 +60,7 @@ async function start() {
                 await notificationRepo.create({
                   user_id: toUserId,
                   type: "NEW_MESSAGE",
-                  payload: { from_user_id: sender_id, from_user_name: sender_name, match_id }
+                  payload: { from_user_id: sender_id, from_user_name: senderName, match_id }
                 });
               }
             }

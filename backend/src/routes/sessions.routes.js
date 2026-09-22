@@ -4,7 +4,7 @@ const { requireAuth } = require("../middleware/auth");
 const { sessionRepo } = require("../repositories/session.repo");
 const { matchRepo } = require("../repositories/match.repo");
 const { eventRepo } = require("../repositories/event.repo");
-
+const { profileRepo } = require("../repositories/profile.repo");
 
 const router = express.Router();
 
@@ -36,6 +36,20 @@ router.post("/", requireAuth, async (req, res, next) => {
     const isMember = match.user1_id === req.user.sub || match.user2_id === req.user.sub;
     if (!isMember) return res.status(403).json({ error: "Forbidden" });
 
+    const profile = await profileRepo.getByUserId(req.user.sub);
+
+    if (!profile) {
+      return res.status(400).json({ error: "Student profile not found" });
+    }
+
+    if (
+      (profile.collaboration_mode === "online" && body.mode !== "online") ||
+      (profile.collaboration_mode === "physical" && body.mode !== "physical")
+    ) {
+      return res.status(400).json({
+        error: `Your profile is set to ${profile.collaboration_mode}. Please choose a compatible session mode.`
+      });
+    }
     if (new Date(body.ends_at).getTime() <= new Date(body.starts_at).getTime()) {
       return res.status(400).json({ error: "ends_at must be after starts_at" });
     }

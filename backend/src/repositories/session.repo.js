@@ -21,9 +21,12 @@ const sessionRepo = {
     const r = await pool.query(
       `
       select s.*,
-             m.user1_id, m.user2_id
+             m.user1_id, m.user2_id,
+             u.code as unit_code,
+             u.name as unit_name
       from sessions s
       join matches m on m.id = s.match_id
+      join units u on u.id = m.unit_id
       where (m.user1_id=$1 or m.user2_id=$1)
       order by s.starts_at asc
       `,

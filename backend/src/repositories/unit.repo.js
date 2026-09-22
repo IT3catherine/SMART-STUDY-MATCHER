@@ -7,6 +7,14 @@ const unitRepo = {
     return r.rows;
   },
 
+   async findById(id) {
+     const r = await pool.query(
+       "select * from units where id = $1",
+       [id]
+     );
+     return r.rows[0] || null;
+  },
+
   async create({ code, name, department }) {
     const id = randomUUID();
     const r = await pool.query(
