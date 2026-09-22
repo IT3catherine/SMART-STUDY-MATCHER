@@ -541,8 +541,8 @@ Areas of interest:
 
 GitHub repository:
 
-https://github.com/IT3catherine/SMART-STUDY-MATCHER
+[SMART-STUDY-MATCHER](https://github.com/IT3catherine/SMART-STUDY-MATCHER)
 
 ## License
 
-This project is currently an academic project. Licensing information can be added when the project is prepared for broader public distribution.
+This project is currently an academic project and does not include an open-source license. Licensing information can be added if the project is later prepared for broader public distribution.
